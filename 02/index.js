@@ -9,9 +9,11 @@ const server = http.createServer((req, res) => {
         res.end('Home Page');
     } else if(req.url == '/contact') {
         res.end('Contact page');
+    } else {
+        res.end('404, not found')
     }
 
-    res.end('Server listening');
+    // res.end('Server listening');
 });
 
 const port = 8080
