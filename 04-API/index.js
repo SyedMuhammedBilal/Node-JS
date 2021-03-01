@@ -7,9 +7,12 @@ const server = http.createServer((req, res) => {
     } else if(req.url == '/api') {
         fs.readFile(`${__dirname}/api/data.json`, 'utf-8', (data, err) => {
             if(err) {
+                res.writeHead(500, {"Content-type": "application/json"})
                 console.log(err)
             } else {
-                console.log(data)
+                console.log(data);
+                res.writeHead(200, {"Content-type": "application/json"})
+                res.end(data)
             }
         })
     }
