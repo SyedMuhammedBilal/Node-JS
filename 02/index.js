@@ -10,7 +10,7 @@ const server = http.createServer((req, res) => {
     } else if(req.url == '/contact') {
         res.end('Contact page');
     } else {
-        res.writeHead(404); // for telling that it is an error page
+        res.writeHead(404, { "Content-type": "text/html" }); // for telling that it is an error page and which document type is using;
         res.end('404, not found')
     }
 
