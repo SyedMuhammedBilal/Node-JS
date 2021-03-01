@@ -25,4 +25,10 @@ fs.writeFile('jsonData.json', Json, (err) => {
     }
 });
 
-// 3
+// 3 and 4
+fs.readFile('./jsonData.json', "utf-8",(err, data) => {
+    // console.log(data)
+
+    const convertedData = JSON.parse(data);
+    console.log(convertedData)
+});
