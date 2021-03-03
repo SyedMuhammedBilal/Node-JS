@@ -5,6 +5,7 @@ const server = http.createServer((req, res) => {
     if(req.url == '/') {
         res.end('Welcome to Home Page')
     } else if(req.url == '/api') {
+        
         fs.readFile(`${__dirname}/api/data.json`, 'utf-8', (data, err) => {
             if(err) {
                 res.writeHead(500, {"Content-type": "application/json"})
@@ -18,8 +19,8 @@ const server = http.createServer((req, res) => {
     }
 })
 
-const port = 8080;
+const port = 8080; 
 
 server.listen(port, () => {
     console.log('server listening')
-})
+});
