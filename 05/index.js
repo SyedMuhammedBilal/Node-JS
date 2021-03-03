@@ -12,8 +12,8 @@ const EventEmitter = require('events');
 
 const event = new EventEmitter();
 
-event.on("Printer", () => {
-    console.log('Hello World')
+event.on("Printer", (statusCode, msg) => {
+    console.log(`the status code is ${statusCode} and the page response is ${msg}`)
 });
 
-event.emit('Printer');
+event.emit('Printer', 200, "ok");
