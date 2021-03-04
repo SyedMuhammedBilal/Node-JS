@@ -5,7 +5,7 @@ const server = http.createServer();
 
 server.on('request', (req, res) => {
     // 1st Method without stream
-    
+
     fs.readFile('./input.txt', (err, data) => {
         if(err) {
             return console.log(err)    
@@ -34,6 +34,10 @@ server.on('request', (req, res) => {
         console.log(err)
         res.end('Not Found')
     })
+
+    // 3rd Method: Stream.pipe()
+    const rStream = fs.createReadStream('input.txt');
+    rStream.pipe(res);
 });
 
 const port = 8081;
