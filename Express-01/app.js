@@ -16,6 +16,14 @@ const app = express();
     response(res) Object represent HTTP response when it receives the HTTP request
 */
 
-app.route('/', (req, res) => {
-    
+app.get('/', (req, res) => {
+    res.send('Hello from Home page');
 })
+
+app.get('/about', (req, res) => {
+    res.send('About page')
+})
+
+app.listen(8080, () => {
+    console.log('server listening at port 8080')
+});
