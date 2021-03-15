@@ -52,6 +52,12 @@ Example:
     1) db.your_collection_name.find(); or db.your_collection_name.find().pretty();
        shows all the documents
     
-    2) get only name key as an output,
+    2) get only Junaid data as an output,
        db.your_collection_name.find( { name: "Junaid" } ).pretty();
        shows only one document in which "Junaid" is appeared
+    
+    3) get only name key as an output,
+       db.your_collection_name.find( { name: "Junaid" }, { name: 1 } ).pretty();
+                                      --------|--------  -----|-----
+                                            Query     1 (show), 0 (hide)
+    
