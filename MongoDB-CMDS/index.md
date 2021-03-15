@@ -49,6 +49,7 @@ ways of reading documents are as follows
                               statement  show/hide
 
 <b>Example:</b> 
+    
     1) db.your_collection_name.find(); or db.your_collection_name.find().pretty();
        shows all the documents
     
