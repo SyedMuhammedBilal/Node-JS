@@ -14,6 +14,7 @@ There ways of creating or inserting a new document/documents in database
 2) <b>db.your_collection_name.insertMany();</b>
 
 <b>Example 01 (insertOne):</b> 
+    
     db.your_collection_name.insertOne(     <---------- collection 
         {
             name: 'Bilal',                 <---------- field: value or (key value pair) --|
@@ -23,6 +24,7 @@ There ways of creating or inserting a new document/documents in database
     )
 
 <b>Example 02 (insertMany):</b>
+    
     db.your_collection_name.insertMany([
         {
             name: 'Bilal',                 <---------- field: value or (key value pair) --|
