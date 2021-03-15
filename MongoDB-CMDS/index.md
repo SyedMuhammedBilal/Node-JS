@@ -1,19 +1,19 @@
-1) db.your_collection_name.find();
+1) <b>db.your_collection_name.find();</b>
    it will find all the documents in database
 
-2) db.your_collection_name.find().pretty()
+2) <b>db.your_collection_name.find().pretty()</b>
    it will format all the database documents
 
 
-================ CRUD Operation ===================
+## ================ CRUD Operation ===================
 
----------- CREATE
+## ---------- CREATE
 There ways of creating or inserting a new document/documents in database
 
-1) db.your_collection_name.insertOne();
-2) db.your_collection_name.insertMany();
+1) <b>db.your_collection_name.insertOne();</b>
+2) <b>db.your_collection_name.insertMany();</b>
 
-Example 01 (insertOne): 
+<b>Example 01 (insertOne):</b> 
     db.your_collection_name.insertOne(     <---------- collection 
         {
             name: 'Bilal',                 <---------- field: value or (key value pair) --|
@@ -22,7 +22,7 @@ Example 01 (insertOne):
         }
     )
 
-Example 02 (insertMany):
+<b>Example 02 (insertMany):</b>
     db.your_collection_name.insertMany([
         {
             name: 'Bilal',                 <---------- field: value or (key value pair) --|
@@ -41,14 +41,14 @@ Example 02 (insertMany):
         }
     ])
 
----------- READ
+## ---------- READ
 ways of reading documents are as follows
 
-1) db.your_collection_name.find(query, projection)
+1) <b>db.your_collection_name.find(query, projection)</b>
                                 --|--  -----|-----
                               statement  show/hide
 
-Example: 
+<b>Example:</b> 
     1) db.your_collection_name.find(); or db.your_collection_name.find().pretty();
        shows all the documents
     
@@ -73,3 +73,7 @@ Example:
 
         now it will show all the documents, who are single in status
     
+    6) get only singles in status but show only the first one
+        db.your_collection_name.find( { status: "single" } ).pretty().limit(1);
+
+        now it will show only first document 
