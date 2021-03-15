@@ -80,3 +80,10 @@ ways of reading documents are as follows
         db.your_collection_name.find( { status: "single" } ).pretty().limit(1);
 
         now it will show only first document 
+
+## ---------- UPDATE
+
+ways for updating document are as follows: 
+
+1) <b>db.your_collection_name.updateOne(filter, update)</b> --> filter(key), update(value)
+2) <b>db.your_collection_name.updateMany(filter, update)</b> --> filter(key), update(value)
