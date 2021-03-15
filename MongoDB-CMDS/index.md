@@ -87,3 +87,14 @@ ways for updating document are as follows:
 
 1) <b>db.your_collection_name.updateOne(filter, update)</b> --> filter(key), update(value)
 2) <b>db.your_collection_name.updateMany(filter, update)</b> --> filter(key), update(value)
+
+<b>Example 01:</b>
+
+    1) get all documents
+       db.your_collection_name.find().pretty();
+    
+    2) update Shayan status to married
+       db.your_collection_name.updateOne( { name: 'Shayan' }, { $set: { status: 'Married' } } )
+       (Note): $set is an operator for updating a document
+    
+    3) 
