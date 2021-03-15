@@ -1,0 +1,57 @@
+1) db.your_collection_name.find();
+   it will find all the documents in database
+
+2) db.your_collection_name.find().pretty()
+   it will format all the database documents
+
+
+================ CRUD Operation ===================
+
+---------- CREATE
+There ways of creating or inserting a new document/documents in database
+
+1) db.your_collection_name.insertOne();
+2) db.your_collection_name.insertMany();
+
+Example 01 (insertOne): 
+    db.your_collection_name.insertOne(     <---------- collection 
+        {
+            name: 'Bilal',                 <---------- field: value or (key value pair) --|
+            age: 19,                       <---------- field: value or (key value pair)   |--->  Document 
+            status: 'single'               <---------- field: value or (key value pair) --|
+        }
+    )
+
+Example 02 (insertMany):
+    db.your_collection_name.insertMany([
+        {
+            name: 'Bilal',                 <---------- field: value or (key value pair) --|
+            age: 19,                       <---------- field: value or (key value pair)   |--->  Document 
+            status: 'single'               <---------- field: value or (key value pair) --|
+        },
+        {
+            name: 'Shayan',                 <---------- field: value or (key value pair) --|
+            age: 19,                       <---------- field: value or (key value pair)   |--->  Document 
+            status: 'Double'               <---------- field: value or (key value pair) --|
+        },
+        {
+            name: 'Junaid',                 <---------- field: value or (key value pair) --|
+            age: 19,                       <---------- field: value or (key value pair)   |--->  Document 
+            status: 'single'               <---------- field: value or (key value pair) --|
+        }
+    ])
+
+---------- READ
+ways of reading documents are as follows
+
+1) db.your_collection_name.find(query, projection)
+                                --|--  -----|-----
+                              statement  show/hide
+
+Example: 
+    1) db.your_collection_name.find(); or db.your_collection_name.find().pretty();
+       shows all the documents
+    
+    2) get only name key as an output,
+       db.your_collection_name.find( { name: "Junaid" } ).pretty();
+       shows only one document in which "Junaid" is appeared
