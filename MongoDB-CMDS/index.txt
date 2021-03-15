@@ -60,4 +60,12 @@ Example:
        db.your_collection_name.find( { name: "Junaid" }, { name: 1 } ).pretty();
                                       --------|--------  -----|-----
                                             Query     1 (show), 0 (hide)
+        
+        (NOTE): by default (_id) will be attached with the name key
+    
+    4) get only name key as an output with _id property
+       db.your_collection_name.find( { name: "Junaid" }, { _id: 0, name: 1 } ).pretty();
+
+       now it won't show _id again
+    
     
