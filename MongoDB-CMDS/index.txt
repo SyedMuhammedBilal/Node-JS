@@ -68,4 +68,8 @@ Example:
 
        now it won't show _id again
     
+    5) get only singles in status 
+        db.your_collection_name.find( {status: "single"} ).pretty();
+
+        now it will show all the documents, who are single in status
     
