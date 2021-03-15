@@ -95,6 +95,9 @@ ways for updating document are as follows:
     
     2) update Shayan status to married
        db.your_collection_name.updateOne( { name: 'Shayan' }, { $set: { status: 'Married' } } )
-       (Note): $set is an operator for updating a document
+       (Note): $set is an operator for updating a document and replace the new value, Now it's updated
     
-    3) 
+    3) Now update all the fields with age 19 to status single to (in relationship)
+       db.your_collection_name.updateMany( { age: '19' }, { $set: { status: 'in Relationship' } } )
+
+       Now it's updated.
