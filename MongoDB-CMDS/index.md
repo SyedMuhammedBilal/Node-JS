@@ -101,3 +101,22 @@ ways for updating document are as follows:
        db.your_collection_name.updateMany( { age: '19' }, { $set: { status: 'in Relationship' } } )
 
        Now it's updated.
+
+## ---------- DELETE
+
+ways of deleting document are as follows:
+
+1) <b>db.your_collection_name.deleteOne( DELETION_CRITERIA );</b>
+1) <b>db.your_collection_name.deleteMany( DELETION_CRITERIA );</b>
+
+<b>Example:</b>
+
+    1) delete the document with name 'Bilal'
+       db.your_collection_name.deleteMany(
+           { name: 'Bilal' }
+       )
+
+    now it's deleted
+
+    2) Or if u want to delete the database documents, so it should look something like this:
+       db.your_collection_name.deleteMany({})
