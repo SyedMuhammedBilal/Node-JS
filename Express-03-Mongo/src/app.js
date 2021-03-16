@@ -13,3 +13,36 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(
 // defining the schema the structure of the document
 // default values, validator etc...
 
+const playlistSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    cType: String,
+    videos: Number,
+    author: String,
+    active: Boolean,
+    date: {
+        type: Date,
+        default: Date.now()
+    }
+});
+
+// A mongoose modal is a wrapper on the mongoose schema.
+// A mongoose schema defines the structure of the document
+// whereas a mongoose modal provides an interface to the database 
+// for creating querying, deleting records etc...
+
+const Playlist = new mongoose.model('Playlist', playlistSchema);
+
+// creating or inserting a new document in database
+
+const reactPlaylist = new Playlist({
+    name: "ReactJS",
+    cType: "Frontend",
+    videos: 4,
+    author: "Facebook",
+    active: true
+});
+
+reactPlaylist.save();
