@@ -8,3 +8,8 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(
 }).catch(err => {
     console.log(err)
 });
+
+// SCHEMA
+// defining the schema the structure of the document
+// default values, validator etc...
+
