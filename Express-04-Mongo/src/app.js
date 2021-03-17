@@ -78,7 +78,8 @@ const createDocument = async () => {
 // get all the documents from the database
 
 const getDocument = async () => {
-    const result = await Playlist.find({cType: 'Backend'}).select({name: 1}); // select for getting only name from the document in which cType is backend
+    // const result = await Playlist.find({cType: 'Backend'}).select({name: 1}); // select for getting only name from the document in which cType is backend
+    const result = await Playlist.find({ videos: {$gte: 3} }).select({name: 1}); // ( $gte ) is the operator means greater than equal to
     console.log(result);
 };
 
