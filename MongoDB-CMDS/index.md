@@ -120,3 +120,11 @@ ways of deleting document are as follows:
 
     2) Or if u want to delete the database documents, so it should look something like this:
        db.your_collection_name.deleteMany({})
+
+<h1> ==================== OPERATORS in NodeJS ======================= </h1>
+
+## $gt (greater than)
+## $gte (greater than equal to)
+## $nin (no in an array)
+## $or (or operator)
+## $and (and operator)
