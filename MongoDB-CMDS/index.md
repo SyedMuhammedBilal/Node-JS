@@ -128,3 +128,5 @@ ways of deleting document are as follows:
 ## $nin (no in an array)
 ## $or (or operator)
 ## $and (and operator)
+## .countDocuments() (to count all the documents)
+## .sort( { filed: value } ) (for sorting)
