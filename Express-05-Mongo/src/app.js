@@ -58,10 +58,14 @@ const createDocument = async () => {
 
 const updateDocument = async (id, name) => {
     try {
-        const result = await Playlist.updateOne({ _id: id }, {
+        // const result = await Playlist.updateOne({ _id: id }, {       //
+        const result = await Playlist.findByIdAndUpdate({_id: id}, {
             $set: {
                 name: name
             }
+        }, {
+            new: true,
+            useFindAndModify: false
         })
         console.log(result);
     } catch (error) {
@@ -69,4 +73,4 @@ const updateDocument = async (id, name) => {
     }
 };
 
-updateDocument('605049e015514e054c79646e', 'Reactjs');
+updateDocument('605049e015514e054c79646e', 'ReactJS');
