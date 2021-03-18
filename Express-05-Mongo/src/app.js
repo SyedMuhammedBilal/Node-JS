@@ -56,6 +56,8 @@ const createDocument = async () => {
 
 // createDocument();
 
+
+// updating a document in MongoDB
 const updateDocument = async (id, name) => {
     try {
         // const result = await Playlist.updateOne({ _id: id }, {       //
@@ -73,4 +75,19 @@ const updateDocument = async (id, name) => {
     }
 };
 
-updateDocument('605049e015514e054c79646e', 'ReactJS');
+// updateDocument('605049e015514e054c79646e', 'ReactJS');
+
+
+// deleting a document
+
+const deleteDocument = async (id) => {
+    try {
+        // const result = await Playlist.deleteOne({ _id: id })
+        const result = await Playlist.findByIdAndDelete({ _id: id }) // to show the document which is deleted
+        console.log(result);
+    } catch (error) {
+        console.log(error)
+    }
+};
+
+deleteDocument('605049e015514e054c79646e')
