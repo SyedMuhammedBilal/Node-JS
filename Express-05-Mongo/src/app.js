@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // creating a connection b/w DataBase and NodeJS
 const uri = "mongodb+srv://syed_bilal:1234@cluster0.wwm7o.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }).then(() => {
     console.log('connection successful')
 }).catch(err => {
     console.log(err)
@@ -19,7 +19,14 @@ const playlistSchema = new mongoose.Schema({
         required: true,
     },
     cType: String,
-    videos: Number,
+    videos: {
+        type: Number,
+        validate(val) {
+            if(val >= 0) {
+                throw new Error('video length should not be less than 0!')
+            }
+        }
+    },
     author: String,
     active: Boolean,
     date: {
@@ -91,3 +98,4 @@ const deleteDocument = async (id) => {
 };
 
 deleteDocument('605049e015514e054c79646e')
+ 
