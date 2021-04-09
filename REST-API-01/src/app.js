@@ -20,6 +20,17 @@ app.post('/students', (req, res) => {
     })
 });
 
+// ASYNC AWAIT Method
+app.post('/students', async (req, res) => {
+    try {
+        const createUser = new Student(req.body);
+        const saveUser = await createUser.save();
+        res.status(201).send(saveUser);
+    } catch (error) {
+        res.status(400).send(error);
+    };
+});
+
 app.listen(PORT, () => {
     console.log(`server started at port number ${PORT}`)
 });
