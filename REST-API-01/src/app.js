@@ -36,9 +36,9 @@ app.post('/students', async (req, res) => {
 app.get('/students', async (req, res) => {
     try {
         const studentsData = await Student.find();
-        res.send(studentsData);
+        res.status(201).send(studentsData);
     } catch (error) {
-        res.send(error);
+        res.status(400).send(error);
     }
 })
 
@@ -47,9 +47,24 @@ app.get('/students/:id', async (req, res) => {
     try {
         const _id = req.params.id
         const studentData = await Student.findById(_id);
-        res.send(studentData);
+        res.status(201).send(studentData);
     } catch (error) {
-        res.send(error)
+        res.status(400).send(error)
+    }
+})
+
+// Delete Document
+app.delete('/students/:id', async (req, res) => {
+    try {
+        const _id = req.params.id
+        const deleteStudent = await Student.findByIdAndDelete(_id);
+        if(!_id) {
+            res.status(400).send();
+        } else {
+            res.status(201).send(deleteStudent)
+        }
+    } catch (error) {
+        res.status(500).send(error)
     }
 })
 
