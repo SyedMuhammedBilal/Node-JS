@@ -10,17 +10,18 @@ app.get('/', (req, res) => {
     res.send('Home Page')
 });
 
-app.post('/students', (req, res) => {
-    console.log(req.body)
-    const user = new Student(req.body)
-    user.save().then(() => {
-        res.status(201).send(user)
-    }).catch(err => {
-        res.status(400).send(err)
-    })
-});
+// PROMISE Returning Method
+// app.post('/students', (req, res) => {
+    // console.log(req.body)
+    // const user = new Student(req.body)
+    // user.save().then(() => {
+        // res.status(201).send(user)
+    // }).catch(err => {
+        // res.status(400).send(err)
+    // })
+// });
 
-// ASYNC AWAIT Method
+// ASYNC AWAIT Method ===== POST Method =====
 app.post('/students', async (req, res) => {
     try {
         const createUser = new Student(req.body);
@@ -30,6 +31,27 @@ app.post('/students', async (req, res) => {
         res.status(400).send(error);
     };
 });
+
+// GET Student Data 
+app.get('/students', async (req, res) => {
+    try {
+        const studentsData = await Student.find();
+        res.send(studentsData);
+    } catch (error) {
+        res.send(error);
+    }
+})
+
+// Get only one data
+app.get('/students/:id', async (req, res) => {
+    try {
+        const _id = req.params.id
+        const studentData = await Student.findById(_id);
+        res.send(studentData);
+    } catch (error) {
+        res.send(error)
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`server started at port number ${PORT}`)
