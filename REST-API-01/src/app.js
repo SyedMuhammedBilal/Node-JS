@@ -65,8 +65,21 @@ app.delete('/students/:id', async (req, res) => {
         }
     } catch (error) {
         res.status(500).send(error)
-    }
-})
+    };
+});
+
+// Update Document
+app.patch('/students/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const updateStudent = await new Student.findByIdAndUpdate(_id, req.body, {
+            new: true
+        });
+        res.send(updateStudent);
+    } catch (error) {
+        res.status(400).send(error);
+    };
+});
 
 app.listen(PORT, () => {
     console.log(`server started at port number ${PORT}`)
