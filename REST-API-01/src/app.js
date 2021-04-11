@@ -72,9 +72,10 @@ app.delete('/students/:id', async (req, res) => {
 app.patch('/students/:id', async (req, res) => {
     try {
         const _id = req.params.id;
-        const updateStudent = await new Student.findByIdAndUpdate(_id, req.body, {
+        const updateUser = new Student(_id, req.body, {
             new: true
         });
+        const updateStudent = await updateUser.findByIdAndUpdate()
         res.send(updateStudent);
     } catch (error) {
         res.status(400).send(error);
