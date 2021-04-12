@@ -6,9 +6,13 @@ const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Home Page')
-});
+// express router
+const router = express.Router();
+app.use(router);
+
+router.get('/', (req, res) => {
+    res.send('Hello from Home Page')
+})
 
 // PROMISE Returning Method
 // app.post('/students', (req, res) => {
@@ -72,9 +76,7 @@ app.delete('/students/:id', async (req, res) => {
 app.patch('/students/:id', async (req, res) => {
     try {
         const _id = req.params.id;
-        const updateUser = new Student(_id, req.body, {
-            new: true
-        });
+        const updateUser = new Student(_id, req.body);
         const updateStudent = await updateUser.findByIdAndUpdate()
         res.send(updateStudent);
     } catch (error) {
