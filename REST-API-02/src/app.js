@@ -24,7 +24,7 @@ app.get('/player', async (req, res) => {
     try {
         const getPlayers = await PlayersRanking.find({}).sort({ "ranking": 1 });
         res.status(201).send(getPlayers);
-    }catch(error) {
+    } catch(error) {
         res.status(400).send(error)
     }
 })
