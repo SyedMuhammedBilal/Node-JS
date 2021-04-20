@@ -19,33 +19,18 @@ router.post('/register', async (req, res) => {
         res.status(422).json({error: 'Please enter all fields'})
     }
 
-    // User.findOne({ email: email })
-    //     .then((userExist) => {
-    //         if(userExist) {
-    //             return res.status(422).json({error: 'user already exist'});
-    //         }
-
-    //         const user = new User({ name, email, phone, work, password, cPassword });
-    //         user.save()
-    //             .then(() => {
-    //                 res.status(201).json({ message: 'user registered successfully' })
-    //             }).catch((error) => {
-    //                 console.log(error)
-    //                 res.status(500).json({ error })
-    //             })
-    //     })
-
     try {
         const response = await User.findOne({ email: email });
+        
         if(response) {
             return res.status(422).json({ error: 'user already exist' })
+        } else if(password !== cPassword) {
+            res.status(422).json({error: "password not matched"})
+        } else {
+            const user = new User({ name, email, phone, work, password, cPassword });
+            await user.save();
+            res.status(201).json({ message: 'user registered successfully' });
         }
-        
-        const user = new User({ name, email, phone, work, password, cPassword });
-
-        await user.save();
-
-        res.status(201).json({ message: 'user registered successfully' });
         
     } catch(error) {
         console.log(error)
@@ -54,24 +39,28 @@ router.post('/register', async (req, res) => {
 })
 
 router.post('/signin', async (req, res) => {
+    // console.log(req.body)
+    // res.json({ message: "wow" })
+
     try {
-        const { email, password } = req.body
+        const  { email, password } = req.body;
 
         if(!email || !password) {
-            res.status(400).json({message: "please fill out all fields"})
+            return res.status(400).json({ error: "please fill all data!" })
         }
 
-        const userLogin = await User.findOne({ email });
+        const userLogin = await User.findOne({email: email});
+
+        console.log(userLogin);
 
         if(!userLogin) {
-            res.status(400).json({ error: "invalid credentials" })
-        } else {
-            res.status(201).json({ message: "user logged in successfully" })
-        }
+            res.status(400).json({error: "invalid credentials"})
+        } 
+
+        res.json({message: "login successful"})
     } catch(error) {
-        console.log(error);
-        res.status(500).send(error)
-    };
+
+    }
 });
 
 module.exports = router
