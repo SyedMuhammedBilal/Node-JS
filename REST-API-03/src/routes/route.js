@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs')
 const router = express.Router();
 const User = require('../models/userSchema');
+const jwt = require('jsonwebtoken')
 
 // Middleware
 const Middleware = (req, res, next) => {
@@ -51,6 +52,12 @@ router.post('/signin', async (req, res) => {
 
         if(userLogin) {
             const isMatched = await bcrypt.compare(password, userLogin.password);
+            const token = await userLogin.generateAuthToken();
+
+            res.cookie('jwt', token, {
+                expires: new Date(Date.now() + 25892000000),
+                httpOnly: true
+            })
     
             if(!isMatched ) {
                 res.status(400).json({error: "invalid credentials"})
