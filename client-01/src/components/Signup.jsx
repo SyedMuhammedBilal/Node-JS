@@ -25,7 +25,7 @@ const Signup = () => {
                   <tr>
                     <td colSpan={3}>
                       <div>
-                        <input placeholder="First Name" type="text" /> <span><input placeholder="Last Name" style={{float: 'right'}} type="text" /></span>
+                        <input placeholder="First Name" type="email" /> 
                       </div>
                     </td>
                   </tr>
@@ -33,6 +33,20 @@ const Signup = () => {
                     <td colSpan={3}>
                       <div>
                         <input type="email" placeholder="Email" />
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={3}>
+                      <div>
+                        <input type="email" placeholder="Phone" />
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={3}>
+                      <div>
+                        <input type="email" placeholder="Profession" />
                       </div>
                     </td>
                   </tr>
