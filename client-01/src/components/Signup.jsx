@@ -21,9 +21,34 @@ const Signup = () => {
         setUser({ ...user, [name]:value })
     }
 
+    const PostData = async () => {
+
+        const { name, email, phone, work, password, cPassword } = user
+
+        const res = await fetch('/register', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name, email, phone, work, password, cPassword
+            })
+        })
+
+        const data = await res.json();
+
+        if(data.status === 422 || !data) {
+            window.alert('Invalid Registration')
+            console.log('Invalid Registration')
+        } else {
+            window.alert('Successful Registration')
+            console.log('Successful Registration')
+        }
+    }
+
     return (
         <div>
-            <div className="center">
+            <form method="POST" className="center">
               <table>
                 <tbody><tr>
                     <td style={{width: '33.33%'}}>
@@ -93,7 +118,7 @@ const Signup = () => {
                   <tr>
                     <td colSpan={3}>
                       <div>
-                        <input type="submit" defaultValue="Register Now" />
+                        <input type="submit" name="signup" value="register" onClick={PostData} defaultValue="Register Now" />
                       </div>
                     </td>
                   </tr>
@@ -101,7 +126,7 @@ const Signup = () => {
               <footer>
                 <p>Already have an account? <animate>Sign in</animate></p>
               </footer>
-            </div>
+            </form>
         </div>
     )
 }
