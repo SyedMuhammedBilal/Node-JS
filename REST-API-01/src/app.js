@@ -1,24 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
-require('./Auth/index')
-const Router = require('./routes/Students')
-const PORT = process.env.PORT || 8080;
+require('./db/connection'); // Database connection
+const studentRouter = require('./routes/Students');
 
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-app.use(Router);
+app.use(express.json()); // Middleware to parse JSON request bodies
+app.use(studentRouter); // Use the student router for API routes
 
-// PROMISE Returning Method
-// app.post('/students', (req, res) => {
-    // console.log(req.body)
-    // const user = new Student(req.body)
-    // user.save().then(() => {
-        // res.status(201).send(user)
-    // }).catch(err => {
-        // res.status(400).send(err)
-    // })
-// });
+app.get('/', (req, res) => {
+    res.send('Welcome to the Student API');
+});
 
 app.listen(PORT, () => {
-    console.log(`server started at port number ${PORT}`)
+    console.log(`Server is running on port ${PORT}`);
 });

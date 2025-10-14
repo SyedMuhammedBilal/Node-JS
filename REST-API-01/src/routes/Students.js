@@ -1,69 +1,70 @@
 const express = require('express');
-const Student = require('../Schema/studentSchema')
 const router = new express.Router();
+const Student = require('../Schema/studentSchema');
 
-
-router.get('/', (req, res) => {
-    res.send('Hello from Home Page')
-})
-
-
+// Create a new student
 router.post('/students', async (req, res) => {
     try {
-        const createUser = new Student(req.body);
-        const saveUser = await createUser.save();
-        res.status(201).send(saveUser);
+        const student = new Student(req.body);
+        const createStudent = await student.save();
+        res.status(201).send(createStudent);
     } catch (error) {
         res.status(400).send(error);
-    };
+    }
 });
 
-// GET Student Data 
+// Get all students
 router.get('/students', async (req, res) => {
     try {
-        const studentsData = await Student.find();
-        res.status(201).send(studentsData);
+        const students = await Student.find();
+        res.status(200).send(students);
     } catch (error) {
-        res.status(400).send(error);
+        res.status(500).send(error);
     }
-})
-
-// Get only one data
-router.get('/students/:id', async (req, res) => {
-    try {
-        const _id = req.params.id
-        const studentData = await Student.findById(_id);
-        res.status(201).send(studentData);
-    } catch (error) {
-        res.status(400).send(error)
-    }
-})
-
-// Delete Document
-router.delete('/students/:id', async (req, res) => {
-    try {
-        const _id = req.params.id
-        const deleteStudent = await Student.findByIdAndDelete(_id);
-        if(!_id) {
-            res.status(400).send();
-        } else {
-            res.status(201).send(deleteStudent)
-        }
-    } catch (error) {
-        res.status(500).send(error)
-    };
 });
 
-// Update Document
+// Get a specific student by ID
+router.get('/students/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const student = await Student.findById(_id);
+        if (!student) {
+            return res.status(404).send();
+        }
+        res.status(200).send(student);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+// Update a student by ID
 router.patch('/students/:id', async (req, res) => {
     try {
         const _id = req.params.id;
-        const updateUser = new Student(_id, req.body);
-        const updateStudent = await updateUser.findByIdAndUpdate()
-        res.send(updateStudent);
+        const updatedStudent = await Student.findByIdAndUpdate(_id, req.body, {
+            new: true // Returns the updated document
+        });
+        if (!updatedStudent) {
+            return res.status(404).send();
+        }
+        res.status(200).send(updatedStudent);
     } catch (error) {
         res.status(400).send(error);
-    };
+    }
 });
 
-module.exports = router
+// Delete a student by ID
+router.delete('/students/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const deletedStudent = await Student.findByIdAndDelete(_id);
+        if (!deletedStudent) {
+            return res.status(404).send();
+        }
+        res.status(200).send(deletedStudent);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+module.exports = router;
