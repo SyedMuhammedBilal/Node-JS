@@ -1,76 +1,141 @@
 const express = require('express');
-const bcrypt = require('bcryptjs')
-const router = express.Router();
 const User = require('../models/userSchema');
-const jwt = require('jsonwebtoken')
+const Blog = require('../models/blogSchema'); // Import Blog model
+const router = new express.Router();
 
-// Middleware
-const Middleware = (req, res, next) => {
-    console.log('middleware running')
-    next();
-}
-
-router.get('/', (req, res) => {
-    res.send('home page')
-});
-
-router.post('/register', async (req, res) => {
-    const { name, email, phone, work, password, cPassword } = req.body;
-
-    if(!name || !email || !phone || !work || !password || !cPassword) {
-        res.status(422).json({error: 'Please enter all fields'})
-    }
-
+// User Routes
+router.post('/users', async (req, res) => {
     try {
-        const response = await User.findOne({ email: email });
-        
-        if(response) {
-            return res.status(422).json({ error: 'user already exist' })
-        } else if(password !== cPassword) {
-            res.status(422).json({error: "password not matched"})
-        } else {
-            const user = new User({ name, email, phone, work, password, cPassword });
-            await user.save();
-            res.status(201).json({ message: 'user registered successfully' });
-        }
-        
-    } catch(error) {
-        console.log(error)
-        res.status(500).json({ error })
-    }
-})
-
-router.post('/signin', async (req, res) => {
-    try {
-        const  { email, password } = req.body;
-
-        if(!email || !password) {
-            return res.status(400).json({ error: "please fill all data!" })
-        }
-
-        const userLogin = await User.findOne({email: email});
-
-        if(userLogin) {
-            const isMatched = await bcrypt.compare(password, userLogin.password);
-            const token = await userLogin.generateAuthToken();
-
-            res.cookie('jwt', token, {
-                expires: new Date(Date.now() + 25892000000),
-                httpOnly: true
-            })
-    
-            if(!isMatched ) {
-                res.status(400).json({error: "invalid credentials"})
-            } else {
-                res.status(200).json({error: "user Logged-in successfully"})
-            }
-        } else {
-            res.status(400).json({error: "invalid credentials"})
-        }
-
-    } catch(error) {
-        res.status(500).json({error})
+        const addUser = new User(req.body);
+        const insertUser = await addUser.save();
+        res.status(201).send(insertUser);
+    } catch (e) {
+        res.status(400).send(e);
     }
 });
 
-module.exports = router
+router.get('/users', async (req, res) => {
+    try {
+        const getUsers = await User.find({});
+        res.status(200).send(getUsers);
+    } catch (e) {
+        res.status(400).send(e);
+    }
+});
+
+router.get('/users/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const getUser = await User.findById(_id);
+        if (!getUser) {
+            return res.status(404).send();
+        } else {
+            res.status(200).send(getUser);
+        }
+    } catch (e) {
+        res.status(500).send(e);
+    }
+});
+
+router.patch('/users/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const updateUser = await User.findByIdAndUpdate(_id, req.body, {
+            new: true // Returns the updated document
+        });
+        if (!updateUser) {
+            return res.status(404).send();
+        } else {
+            res.status(200).send(updateUser);
+        }
+    } catch (e) {
+        res.status(500).send(e);
+    }
+});
+
+router.delete('/users/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const deleteUser = await User.findByIdAndDelete(_id);
+        if (!deleteUser) {
+            return res.status(404).send();
+        } else {
+            res.status(200).send(deleteUser);
+        }
+    } catch (e) {
+        res.status(500).send(e);
+    }
+});
+
+// Blog Routes
+
+// Create a new blog post
+router.post('/blogs', async (req, res) => {
+    try {
+        const addBlog = new Blog(req.body);
+        const insertBlog = await addBlog.save();
+        res.status(201).send(insertBlog);
+    } catch (e) {
+        res.status(400).send(e);
+    }
+});
+
+// Get all blog posts
+router.get('/blogs', async (req, res) => {
+    try {
+        const getBlogs = await Blog.find({});
+        res.status(200).send(getBlogs);
+    } catch (e) {
+        res.status(400).send(e);
+    }
+});
+
+// Get a single blog post by ID
+router.get('/blogs/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const getBlog = await Blog.findById(_id);
+        if (!getBlog) {
+            return res.status(404).send();
+        } else {
+            res.status(200).send(getBlog);
+        }
+    } catch (e) {
+        res.status(500).send(e);
+    }
+});
+
+// Update a blog post by ID
+router.patch('/blogs/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const updateBlog = await Blog.findByIdAndUpdate(_id, req.body, {
+            new: true // Returns the updated document
+        });
+        if (!updateBlog) {
+            return res.status(404).send();
+        } else {
+            res.status(200).send(updateBlog);
+        }
+    } catch (e) {
+        res.status(500).send(e);
+    }
+});
+
+// Delete a blog post by ID
+router.delete('/blogs/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const deleteBlog = await Blog.findByIdAndDelete(_id);
+        if (!deleteBlog) {
+            return res.status(404).send();
+        } else {
+            res.status(200).send(deleteBlog);
+        }
+    } catch (e) {
+        res.status(500).send(e);
+    }
+});
+
+
+module.exports = router;
