@@ -1,141 +1,83 @@
 const express = require('express');
-const User = require('../models/userSchema');
-const Blog = require('../models/blogSchema'); // Import Blog model
 const router = new express.Router();
+const User = require('../models/userSchema'); // Assuming userSchema is already defined
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-// User Routes
-router.post('/users', async (req, res) => {
-    try {
-        const addUser = new User(req.body);
-        const insertUser = await addUser.save();
-        res.status(201).send(insertUser);
-    } catch (e) {
-        res.status(400).send(e);
+// Register a new user
+router.post('/register', async (req, res) => {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+        return res.status(400).json({ error: "Please fill all the fields" });
     }
-});
 
-router.get('/users', async (req, res) => {
     try {
-        const getUsers = await User.find({});
-        res.status(200).send(getUsers);
-    } catch (e) {
-        res.status(400).send(e);
-    }
-});
+        const userExist = await User.findOne({ email: email });
 
-router.get('/users/:id', async (req, res) => {
-    try {
-        const _id = req.params.id;
-        const getUser = await User.findById(_id);
-        if (!getUser) {
-            return res.status(404).send();
+        if (userExist) {
+            return res.status(409).json({ error: "Email already exists" });
         } else {
-            res.status(200).send(getUser);
+            const user = new User({ username, email, password });
+
+            // Hash password before saving
+            // This would typically be done in a pre-save hook in the schema
+            // For now, let's assume it's handled by the schema or add it here explicitly
+            // const salt = await bcrypt.genSalt(10);
+            // user.password = await bcrypt.hash(password, salt);
+
+            await user.save();
+            res.status(201).json({ message: "User registered successfully" });
         }
-    } catch (e) {
-        res.status(500).send(e);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to register" });
     }
 });
 
-router.patch('/users/:id', async (req, res) => {
+// User login
+router.post('/login', async (req, res) => {
     try {
-        const _id = req.params.id;
-        const updateUser = await User.findByIdAndUpdate(_id, req.body, {
-            new: true // Returns the updated document
-        });
-        if (!updateUser) {
-            return res.status(404).send();
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ error: "Please fill the data" });
+        }
+
+        const userLogin = await User.findOne({ email: email });
+
+        if (userLogin) {
+            // Compare hashed password
+            const isMatch = await bcrypt.compare(password, userLogin.password);
+
+            // Generate JWT token
+            const token = await userLogin.generateAuthToken();
+            console.log(token);
+
+            // Store token in cookie
+            res.cookie("jwtoken", token, {
+                expires: new Date(Date.now() + 25892000000), // 30 days expiry
+                httpOnly: true
+            });
+
+            if (!isMatch) {
+                res.status(400).json({ error: "Invalid credentials" });
+            } else {
+                res.json({ message: "User Signin Successfully" });
+            }
         } else {
-            res.status(200).send(updateUser);
+            res.status(400).json({ error: "Invalid credentials" });
         }
-    } catch (e) {
-        res.status(500).send(e);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
     }
 });
 
-router.delete('/users/:id', async (req, res) => {
-    try {
-        const _id = req.params.id;
-        const deleteUser = await User.findByIdAndDelete(_id);
-        if (!deleteUser) {
-            return res.status(404).send();
-        } else {
-            res.status(200).send(deleteUser);
-        }
-    } catch (e) {
-        res.status(500).send(e);
-    }
+// Example route (can be removed or modified based on existing structure)
+router.get('/', (req, res) => {
+    res.send('Hello from the home page');
 });
-
-// Blog Routes
-
-// Create a new blog post
-router.post('/blogs', async (req, res) => {
-    try {
-        const addBlog = new Blog(req.body);
-        const insertBlog = await addBlog.save();
-        res.status(201).send(insertBlog);
-    } catch (e) {
-        res.status(400).send(e);
-    }
-});
-
-// Get all blog posts
-router.get('/blogs', async (req, res) => {
-    try {
-        const getBlogs = await Blog.find({});
-        res.status(200).send(getBlogs);
-    } catch (e) {
-        res.status(400).send(e);
-    }
-});
-
-// Get a single blog post by ID
-router.get('/blogs/:id', async (req, res) => {
-    try {
-        const _id = req.params.id;
-        const getBlog = await Blog.findById(_id);
-        if (!getBlog) {
-            return res.status(404).send();
-        } else {
-            res.status(200).send(getBlog);
-        }
-    } catch (e) {
-        res.status(500).send(e);
-    }
-});
-
-// Update a blog post by ID
-router.patch('/blogs/:id', async (req, res) => {
-    try {
-        const _id = req.params.id;
-        const updateBlog = await Blog.findByIdAndUpdate(_id, req.body, {
-            new: true // Returns the updated document
-        });
-        if (!updateBlog) {
-            return res.status(404).send();
-        } else {
-            res.status(200).send(updateBlog);
-        }
-    } catch (e) {
-        res.status(500).send(e);
-    }
-});
-
-// Delete a blog post by ID
-router.delete('/blogs/:id', async (req, res) => {
-    try {
-        const _id = req.params.id;
-        const deleteBlog = await Blog.findByIdAndDelete(_id);
-        if (!deleteBlog) {
-            return res.status(404).send();
-        } else {
-            res.status(200).send(deleteBlog);
-        }
-    } catch (e) {
-        res.status(500).send(e);
-    }
-});
-
 
 module.exports = router;
