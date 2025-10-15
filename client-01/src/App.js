@@ -1,26 +1,27 @@
-import React from "react"
-import Navbar from './components/Navbar'
-import Home from './components/Home'
-import About from './components/About'
-import Login from './components/Signin'
-import Signup from './components/Signup'
-import Contact from './components/Contact'
-import Error from './components/404Error'
-import { Route, Switch } from 'react-router-dom'
+import React from 'react';
+import './App.css';
+import Navbar from './components/Navbar';
+import Home from './components/Home';
+import About from './components/About';
+import Contact from './components/Contact';
+import Signin from './components/Signin';
+import Signup from './components/Signup';
+import Error404 from './components/404Error';
+import { Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
-    <div>
+    <>
       <Navbar />
-      <Switch>
-        <Route exact path="/home" component={Home} /> 
-        <Route exact path="/about" component={About} /> 
-        <Route exact path="/login" component={Login} /> 
-        <Route exact path="/signup" component={Signup} /> 
-        <Route exact path="/contact" component={Contact} /> 
-        <Route exact path="/*" component={Error} /> 
-      </Switch>
-    </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="*" element={<Error404 />} />
+      </Routes>
+    </>
   );
 }
 
