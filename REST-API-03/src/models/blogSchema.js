@@ -32,6 +32,11 @@ const blogSchema = new mongoose.Schema({
         enum: ['Technology', 'Travel', 'Food', 'Lifestyle', 'Other'],
         default: 'Other'
     },
+    imageUrl: { // Added for image support
+        type: String,
+        trim: true,
+        default: '' // Can be an empty string or a default placeholder image URL
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -45,6 +50,12 @@ const blogSchema = new mongoose.Schema({
 // Update `updatedAt` field on save
 blogSchema.pre('save', function(next) {
     this.updatedAt = Date.now();
+    next();
+});
+
+// Update `updatedAt` field on findOneAndUpdate
+blogSchema.pre('findOneAndUpdate', function(next) {
+    this.set({ updatedAt: Date.now() });
     next();
 });
 
