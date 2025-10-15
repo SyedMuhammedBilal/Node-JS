@@ -52,49 +52,163 @@ router.post('/signin', async (req, res) => {
 
         const userLogin = await User.findOne({ email: email });
 
-        // ... (rest of the signin logic would go here)
-        // For brevity, assuming it continues from the provided snippet.
-        // If userLogin is found, compare passwords and issue a token.
+        if (userLogin) {
+            const isMatch = await bcrypt.compare(password, userLogin.password);
+
+            if (!isMatch) {
+                res.status(400).json({ error: "Invalid Credentials" });
+            } else {
+                // Generate token (if using JWT)
+                // const token = await userLogin.generateAuthToken(); // Assuming a method on userSchema
+                // res.cookie("jwtoken", token, {
+                //     expires: new Date(Date.now() + 25892000000),
+                //     httpOnly: true
+                // });
+
+                res.json({ message: "User Signin Successfully" });
+            }
+        } else {
+            res.status(400).json({ error: "Invalid Credentials" });
+        }
 
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: "An error occurred during signin" });
+        res.status(500).json({ error: "Failed to signin" });
     }
 });
 
-// Blog Newsfeed Endpoint
+// Blog Related Routes
+
+// Route to create a new blog post
+router.post('/blogs', async (req, res) => {
+    try {
+        const { title, content, author, publishDate, tags, category, imageUrl } = req.body;
+
+        if (!title || !content || !author || !publishDate) {
+            return res.status(400).json({ error: "Please fill in all required blog fields" });
+        }
+
+        const blog = new Blog({
+            title,
+            content,
+            author,
+            publishDate,
+            tags,
+            category,
+            imageUrl
+        });
+
+        await blog.save();
+        res.status(201).json({ message: "Blog post created successfully", blog });
+    } catch (err) {
+        console.error(err);
+        if (err.name === 'ValidationError') {
+            return res.status(400).json({ error: err.message });
+        }
+        res.status(500).json({ error: "Failed to create blog post" });
+    }
+});
+
+// Route to get all blog posts with pagination and filtering
 router.get('/blogs', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const category = req.query.category; // Optional category filter
+        const limit = parseInt(req.query.limit) || 10; // Default to 10 blogs per page
         const skip = (page - 1) * limit;
 
-        let query = {};
-        if (category) {
-            query.category = category; // Add category to query if provided
+        const filter = {};
+        if (req.query.category) {
+            filter.category = req.query.category;
         }
+        if (req.query.tags) {
+            // Assuming tags are comma-separated in the query string
+            filter.tags = { $in: req.query.tags.split(',').map(tag => tag.trim()) };
+        }
+        // Add more filters here as needed (e.g., author, title search)
 
-        const blogs = await Blog.find(query)
-                                .sort({ publishDate: -1, createdAt: -1 }) // Sort by newest first
+        const totalBlogs = await Blog.countDocuments(filter);
+        const blogs = await Blog.find(filter)
                                 .skip(skip)
-                                .limit(limit);
-
-        const totalBlogs = await Blog.countDocuments(query);
+                                .limit(limit)
+                                .sort({ publishDate: -1, createdAt: -1 }); // Sort by most recent
 
         res.status(200).json({
             page,
             limit,
-            totalBlogs,
             totalPages: Math.ceil(totalBlogs / limit),
+            totalBlogs,
             blogs
         });
-
     } catch (err) {
-        console.error("Error fetching blog newsfeed:", err);
-        res.status(500).json({ error: "Failed to fetch blogs" });
+        console.error(err);
+        res.status(500).json({ error: "Failed to retrieve blog posts" });
     }
 });
 
+// Route to get a single blog post by ID
+router.get('/blogs/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const blog = await Blog.findById(id);
+
+        if (!blog) {
+            return res.status(404).json({ error: "Blog post not found" });
+        }
+
+        res.status(200).json(blog);
+    } catch (err) {
+        console.error(err);
+        if (err.name === 'CastError') { // Handle invalid ID format
+            return res.status(400).json({ error: "Invalid blog ID format" });
+        }
+        res.status(500).json({ error: "Failed to retrieve blog post" });
+    }
+});
+
+// Route to update a blog post by ID
+router.patch('/blogs/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {
+            new: true, // Return the updated document
+            runValidators: true // Run schema validators on update
+        });
+
+        if (!updatedBlog) {
+            return res.status(404).json({ error: "Blog post not found" });
+        }
+
+        res.status(200).json({ message: "Blog post updated successfully", blog: updatedBlog });
+    } catch (err) {
+        console.error(err);
+        if (err.name === 'CastError') {
+            return res.status(400).json({ error: "Invalid blog ID format" });
+        }
+        if (err.name === 'ValidationError') {
+            return res.status(400).json({ error: err.message });
+        }
+        res.status(500).json({ error: "Failed to update blog post" });
+    }
+});
+
+// Route to delete a blog post by ID
+router.delete('/blogs/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedBlog = await Blog.findByIdAndDelete(id);
+
+        if (!deletedBlog) {
+            return res.status(404).json({ error: "Blog post not found" });
+        }
+
+        res.status(200).json({ message: "Blog post deleted successfully", blog: deletedBlog });
+    } catch (err) {
+        console.error(err);
+        if (err.name === 'CastError') {
+            return res.status(400).json({ error: "Invalid blog ID format" });
+        }
+        res.status(500).json({ error: "Failed to delete blog post" });
+    }
+});
 
 module.exports = router;
