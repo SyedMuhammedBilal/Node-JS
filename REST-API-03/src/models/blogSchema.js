@@ -11,13 +11,26 @@ const blogSchema = new mongoose.Schema({
         required: true
     },
     author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Assuming you have a User model
-        required: true
-    },
-    image: { // Added image field
         type: String,
-        required: false // Not all blogs might have an image
+        required: true,
+        trim: true
+    },
+    publishDate: {
+        type: Date,
+        required: true,
+        validate: {
+            validator: function(v) {
+                // Ensure the date is not in the future
+                return v <= new Date();
+            },
+            message: props => `${props.value} is a future date and cannot be a publish date!`
+        }
+    },
+    tags: [String],
+    category: {
+        type: String,
+        enum: ['Technology', 'Travel', 'Food', 'Lifestyle', 'Other'],
+        default: 'Other'
     },
     createdAt: {
         type: Date,
