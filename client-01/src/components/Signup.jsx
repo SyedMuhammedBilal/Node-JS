@@ -21,7 +21,8 @@ const Signup = () => {
         setUser({ ...user, [name]:value })
     }
 
-    const PostData = async () => {
+    const PostData = async (e) => {
+        e.preventDefault(); // Prevent default form submission
 
         const { name, email, phone, work, password, cPassword } = user
 
@@ -37,7 +38,7 @@ const Signup = () => {
 
         const data = await res.json();
 
-        if(data.status === 422 || !data) {
+        if(res.status === 422 || !data) { // Check res.status for proper error handling
             window.alert('Invalid Registration')
             console.log('Invalid Registration')
         } else {
@@ -50,7 +51,8 @@ const Signup = () => {
         <div>
             <form method="POST" className="center">
               <table>
-                <tbody><tr>
+                <tbody>
+                  <tr>
                     <td style={{width: '33.33%'}}>
                       <div className="dash" />
                     </td>
@@ -69,63 +71,69 @@ const Signup = () => {
                   <tr>
                     <td colSpan={3}>
                       <div>
-                        <input name="name" onChange={handleInputs} value={user.name} placeholder="First Name" type="email" /> 
+                        <input type="text" name="name" value={user.name} onChange={handleInputs} placeholder="Your Name" required="true" />
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td colSpan={3}>
                       <div>
-                        <input name="email" onChange={handleInputs} value={user.email} type="email" placeholder="Email" />
+                        <input type="email" name="email" value={user.email} onChange={handleInputs} placeholder="Email" required="true" />
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td colSpan={3}>
                       <div>
-                        <input name="phone" onChange={handleInputs} value={user.phone} type="email" placeholder="Phone" />
+                        <input type="text" name="phone" value={user.phone} onChange={handleInputs} placeholder="Phone" required="true" />
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td colSpan={3}>
                       <div>
-                        <input name="work" onChange={handleInputs} value={user.work} type="email" placeholder="Profession" />
+                        <input type="text" name="work" value={user.work} onChange={handleInputs} placeholder="Your Profession" required="true" />
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td colSpan={3}>
                       <div>
-                        <input name="password" onChange={handleInputs} value={user.password} placeholder="Password" type="password" />
+                        <input type="password" name="password" value={user.password} onChange={handleInputs} placeholder="Password" required="true" />
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td colSpan={3}>
                       <div>
-                        <input name="cPassword" onChange={handleInputs} value={user.cPassword} placeholder="Confirm Password" type="password" />
+                        <input type="password" name="cPassword" value={user.cPassword} onChange={handleInputs} placeholder="Confirm Password" required="true" />
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td colSpan={3}>
                       <div className="terms">
-                        <input id="checkid2" type="checkbox" defaultValue="test" /> <label htmlFor="checkid2">I accept the <a>Terms of Use</a> &amp; <a>Privacy Policy.</a></label>
+                        <input type="checkbox" name="checkbox" />
+                        <label htmlFor="checkbox">I accept the Terms of Use &amp; Privacy Policy.</label>
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td colSpan={3}>
                       <div>
-                        <input type="submit" name="signup" value="register" onClick={PostData} defaultValue="Register Now" />
+                        <input type="submit" name="signup" id="signup" className="form-submit" value="Register" onClick={PostData} />
                       </div>
                     </td>
                   </tr>
-                </tbody></table>
-              <footer>
-                <p>Already have an account? <animate>Sign in</animate></p>
-              </footer>
+                  <tr>
+                    <td colSpan={3}>
+                      <footer>
+                        <p>Already have an account? <a href="/signin">Sign in</a></p>
+                      </footer>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </form>
         </div>
     )
