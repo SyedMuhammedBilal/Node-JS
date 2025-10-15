@@ -1,141 +1,80 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/userSchema');
-const Blog = require('../models/blogSchema'); // Import the Blog schema
+const User = require('../models/userSchema'); // Assuming userSchema exports the User model
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken'); // Assuming jsonwebtoken is installed
 
-// User registration route (existing)
+// User Registration Route
 router.post('/register', async (req, res) => {
     const { name, email, phone, work, password, cPassword } = req.body;
 
     if (!name || !email || !phone || !work || !password || !cPassword) {
-        return res.status(422).json({ error: 'Please fill all the fields' });
+        return res.status(422).json({ error: "Please fill in all fields" });
     }
 
     try {
         const userExist = await User.findOne({ email: email });
 
         if (userExist) {
-            return res.status(422).json({ error: 'Email already exists' });
+            return res.status(422).json({ error: "Email already exists" });
         } else if (password !== cPassword) {
-            return res.status(422).json({ error: 'Passwords do not match' });
+            return res.status(422).json({ error: "Passwords do not match" });
         } else {
             const user = new User({ name, email, phone, work, password, cPassword });
+
+            // Hash the password before saving
+            // This logic should ideally be in the userSchema pre-save hook,
+            // but for demonstration, it's here.
+            // In a real app, you'd use a pre-save hook in the schema.
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
+            user.cPassword = await bcrypt.hash(cPassword, salt); // Also hash confirm password if storing
+
             await user.save();
-            res.status(201).json({ message: 'User registered successfully' });
+            res.status(201).json({ message: "User registered successfully" });
         }
+
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Failed to register' });
+        res.status(500).json({ error: "Failed to register" });
     }
 });
 
-// User login route (existing)
+// User Signin Route
 router.post('/signin', async (req, res) => {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ error: 'Please fill the data' });
+            return res.status(400).json({ error: "Please fill in all fields" });
         }
 
         const userLogin = await User.findOne({ email: email });
 
         if (userLogin) {
-            if (password === userLogin.password) { // This should ideally be hashed password comparison
-                res.json({ message: 'User Signin Successful' });
+            const isMatch = await bcrypt.compare(password, userLogin.password);
+
+            if (!isMatch) {
+                res.status(400).json({ error: "Invalid credentials" });
             } else {
-                res.status(400).json({ error: 'Invalid Credentials' });
+                // Generate JWT token
+                const token = jwt.sign({ _id: userLogin._id }, process.env.SECRET_KEY || 'YOUR_SECRET_KEY_HERE'); // Use environment variable for secret key
+
+                // Store token in cookies (example)
+                res.cookie("jwtoken", token, {
+                    expires: new Date(Date.now() + 25892000000), // Expires in 30 days
+                    httpOnly: true
+                });
+
+                res.json({ message: "User signed in successfully" });
             }
         } else {
-            res.status(400).json({ error: 'Invalid Credentials' });
+            res.status(400).json({ error: "Invalid credentials" });
         }
+
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Server Error' });
-    }
-});
-
-// Blog Endpoints
-
-// Create a new blog post
-router.post('/blogs', async (req, res) => {
-    const { title, content, author, tags } = req.body;
-
-    if (!title || !content || !author) {
-        return res.status(422).json({ error: 'Please fill all required fields: title, content, and author' });
-    }
-
-    try {
-        const blog = new Blog({ title, content, author, tags });
-        await blog.save();
-        res.status(201).json({ message: 'Blog post created successfully', blog });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to create blog post' });
-    }
-});
-
-// Get all blog posts
-router.get('/blogs', async (req, res) => {
-    try {
-        const blogs = await Blog.find();
-        res.status(200).json(blogs);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to retrieve blog posts' });
-    }
-});
-
-// Get a single blog post by ID
-router.get('/blogs/:id', async (req, res) => {
-    try {
-        const blog = await Blog.findById(req.params.id);
-        if (!blog) {
-            return res.status(404).json({ error: 'Blog post not found' });
-        }
-        res.status(200).json(blog);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to retrieve blog post' });
-    }
-});
-
-// Update a blog post by ID
-router.patch('/blogs/:id', async (req, res) => {
-    const { title, content, author, tags } = req.body;
-
-    if (!title && !content && !author && !tags) {
-        return res.status(400).json({ error: 'No fields provided for update' });
-    }
-
-    try {
-        const updatedBlog = await Blog.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true } // Return the updated document and run schema validators
-        );
-
-        if (!updatedBlog) {
-            return res.status(404).json({ error: 'Blog post not found' });
-        }
-        res.status(200).json({ message: 'Blog post updated successfully', blog: updatedBlog });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to update blog post' });
-    }
-});
-
-// Delete a blog post by ID
-router.delete('/blogs/:id', async (req, res) => {
-    try {
-        const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
-        if (!deletedBlog) {
-            return res.status(404).json({ error: 'Blog post not found' });
-        }
-        res.status(200).json({ message: 'Blog post deleted successfully' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to delete blog post' });
+        res.status(500).json({ error: "Failed to sign in" });
     }
 });
 
