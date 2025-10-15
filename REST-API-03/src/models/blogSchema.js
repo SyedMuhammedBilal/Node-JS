@@ -11,13 +11,9 @@ const blogSchema = new mongoose.Schema({
         required: true
     },
     author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Assuming you have a User model
-        required: true
-    },
-    image: { // Added image field
         type: String,
-        required: false // Not all blogs might have an image
+        required: true,
+        trim: true
     },
     createdAt: {
         type: Date,
@@ -29,7 +25,6 @@ const blogSchema = new mongoose.Schema({
     }
 });
 
-// Update `updatedAt` field on save
 blogSchema.pre('save', function(next) {
     this.updatedAt = Date.now();
     next();
